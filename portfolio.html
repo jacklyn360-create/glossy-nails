@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glossy - Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="nav-container">
+                <h1 class="logo">Glossy</h1>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="portfolio.html">Portfolio</a></li>
+                    <li><a href="inspo-gallery.html">Inspo Gallery</a></li>
+                    <li><a href="design-generator.html">Design Generator</a></li>
+                    <li><a href="book-now.html">Book Now</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="portfolio">
+            <h1>Portfolio</h1>
+            <p>Explore my latest nail art creations, showcasing creativity and precision in every design.</p>
+            <div class="grid">
+                <div class="grid-item" data-images="images/portfolio/set-01/angle-1.jpg,images/set-01/angle-2.jpg" data-description="whimsical fairy nail set" data-duration="5 hours">
+                    <img src="images/portfolio/set-01/angle-1.jpg" alt="Nail Set 1">
+                    <div class="item-info">
+                        <h3>whimsical fairy nail set</h3>
+                        <p>Duration: 5 hours</p>
+                    </div>
+                </div>
+                <div class="grid-item" data-images="images/portfolio/set-02/angle-1.jpg,images/portfolio/set-02/angle-2.jpg,images/portfolio/set-02/angle-3.jpg" data-description="short and chic nail set with blue stars and pink polka dots" data-duration="1.5 hours">
+                    <img src="images/portfolio/set-02/angle-1.jpg" alt="Nail Set 2">
+                    <div class="item-info">
+                        <h3>short and chic nail set with blue stars and pink polka dots</h3>
+                        <p>Duration: 1.5 hours</p>
+                    </div>
+                </div>
+                <div class="grid-item" data-images="images/portfolio/set-03/angle-1.jpg,images/portfolio/set-03/angle-2.jpg,images/portfolio/set-03/angle-3.jpg" data-description="cute and soft nail set" data-duration="4 hours">
+                    <img src="images/portfolio/set-03/angle-1.jpg" alt="Nail Set 3">
+                    <div class="item-info">
+                        <h3>cute and soft nail set</h3>
+                        <p>Duration: 4 hours</p>
+                    </div>
+                </div>
+                <div class="grid-item" data-images="images/portfolio/set-04/angle-1.jpg,images/portfolio/set-04/angle-2.jpg,images/portfolio/set-04/angle-3.jpg" data-description="beachy mermaid style nail set" data-duration="4 hours">
+                    <img src="images/portfolio/set-04/angle-1.jpg" alt="Nail Set 4">
+                    <div class="item-info">
+                        <h3>beachy mermaid style nail set</h3>
+                        <p>Duration: 4 hours</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div id="slideshow-modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <img id="slideshow-img" src="" alt="">
+                <div class="modal-details">
+                    <h3 id="modal-title"></h3>
+                    <p id="modal-duration"></p>
+                </div>
+                <button id="prev">&lt;</button>
+                <button id="next">&gt;</button>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-container">
+            <div class="contact-info">
+                <h3>Contact Me</h3>
+                <p>Email: jacklynliu360@gmail.com</p>
+                <p>Phone: (437) 218-3226</p>
+            </div>
+            <div class="social-links">
+                <a href="https://www.instagram.com/jackyznails" class="social-link">📷</a>
+                <a href="https://www.tiktok.com/@jackyznails" class="social-link">🎵</a>
+                <a href="https://jackyznails.etsy.com" class="social-link">🛒</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

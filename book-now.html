@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glossy - Book Now</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .booking-page { max-width: 900px; margin: 0 auto; padding: 2rem 1rem; }
+        .booking-page h1 { text-align: center; color: #F8BBD9; margin-bottom: 2rem; font-size: 2.5rem; }
+        .calendly-wrapper { border-radius: 18px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.07); border: 1px solid #f1e4e9; }
+    </style>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="nav-container">
+                <h1 class="logo">Glossy</h1>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="portfolio.html">Portfolio</a></li>
+                    <li><a href="inspo-gallery.html">Inspo Gallery</a></li>
+                    <li><a href="design-generator.html">Design Generator</a></li>
+                    <li><a href="book-now.html">Book Now</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="booking-page">
+            <h1>Book Now</h1>
+            <div class="calendly-wrapper">
+                <div class="calendly-inline-widget" id="calendly-widget" data-url="https://calendly.com/jacklynliu360" style="min-width:320px;height:700px;"></div>
+                <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-container">
+            <div class="contact-info">
+                <h3>Contact Me</h3>
+                <p>Email: jacklynliu360@gmail.com</p>
+                <p>Phone: (437) 218-3226</p>
+            </div>
+            <div class="social-links">
+                <a href="https://www.instagram.com/jackyznails" class="social-link">📷</a>
+                <a href="https://www.tiktok.com/@jackyznails" class="social-link">🎵</a>
+                <a href="https://jackyznails.etsy.com" class="social-link">🛒</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="config.js"></script>
+    <script src="script.js"></script>
+    <script>
+    emailjs.init(EMAILJS_PUBLIC_KEY);
+
+    const selected = localStorage.getItem('glossySelectedDesign');
+
+    window.addEventListener('message', function(e) {
+        if (e.data.event && e.data.event === 'calendly.event_scheduled') {
+            const design = selected ? JSON.parse(selected) : null;
+            emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+                design_title: design ? design.title : 'No design selected',
+                design_price: design ? design.price : 'N/A',
+                design_time: design ? design.time : 'N/A',
+                design_image: design ? design.imgSrc : 'No image'
+            })
+            .then(function() {
+                console.log('Email sent successfully!');
+            })
+            .catch(function(error) {
+                console.error('Email failed:', error);
+            });
+        }
+    });
+</script>
+</body>
+</html>

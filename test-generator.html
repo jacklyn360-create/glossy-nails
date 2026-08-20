@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Design Generator</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 2rem auto; padding: 1rem; }
+        .test-section { border: 1px solid #ddd; padding: 1rem; margin: 1rem 0; border-radius: 8px; }
+        .test-result { padding: 0.5rem; margin: 0.5rem 0; border-radius: 4px; }
+        .pass { background: #e8f5e9; color: #2e7d32; }
+        .fail { background: #ffebee; color: #c62828; }
+        button { padding: 0.5rem 1rem; margin: 0.25rem; cursor: pointer; background: #2196F3; color: white; border: none; border-radius: 4px; }
+        img { max-width: 100%; max-height: 300px; margin: 1rem 0; border-radius: 8px; }
+        textarea, select { width: 100%; padding: 0.5rem; margin: 0.5rem 0; font-family: Arial; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Design Generator Test Suite</h1>
+    
+    <div class="test-section">
+        <h2>1. Basic Functionality Test</h2>
+        <p>Testing if the design generator can create images...</p>
+        <div id="basic-test-results"></div>
+        <button onclick="testBasicFunctionality()">Run Basic Test</button>
+    </div>
+
+    <div class="test-section">
+        <h2>2. Manual Design Generation</h2>
+        <textarea id="prompt" placeholder="Enter your nail design description..." rows="4">elegant rose gold floral design with rhinestones</textarea>
+        <select id="shape">
+            <option value="">No specific shape</option>
+            <option value="almond">Almond</option>
+            <option value="coffin">Coffin</option>
+            <option value="square">Square</option>
+            <option value="oval">Oval</option>
+            <option value="stiletto">Stiletto</option>
+        </select>
+        <button onclick="generateDesignTest()">Generate Design</button>
+        <div id="manual-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. Image Generation</h2>
+        <div id="image-result"></div>
+    </div>
+
+    <script>
+        async function testBasicFunctionality() {
+            const resultsDiv = document.getElementById('basic-test-results');
+            resultsDiv.innerHTML = '';
+            const tests = [];
+
+            // Test 1: Check if Pollinations API is accessible
+            try {
+                const testPrompt = encodeURIComponent('professional nail art photo, almond shaped nails, elegant rose gold floral design');
+                const testUrl = `https://image.pollinations.ai/prompt/${testPrompt}?width=512&height=512&nologo=true&seed=12345`;
+                
+                const img = new Image();
+                let loaded = false;
+                
+                img.onload = function() {
+                    loaded = true;
+                    addTestResult(resultsDiv, 'Pollinations API Accessibility', true, 'Successfully loaded image from Pollinations API');
+                };
+                
+                img.onerror = function() {
+                    if (!loaded) {
+                        addTestResult(resultsDiv, 'Pollinations API Accessibility', false, 'Failed to load image from Pollinations API');
+                    }
+                };
+                
+                img.src = testUrl;
+                
+                // Set a timeout to check if image loaded
+                setTimeout(() => {
+                    if (!loaded) {
+                        addTestResult(resultsDiv, 'Pollinations API Accessibility', false, 'Image load timeout');
+                    }
+                }, 5000);
+            } catch (err) {
+                addTestResult(resultsDiv, 'Pollinations API Test', false, err.message);
+            }
+
+            // Test 2: Check page elements
+            const elements = [
+                { id: 'design-prompt', name: 'Design Prompt Textarea' },
+                { id: 'nail-shape', name: 'Nail Shape Select' },
+                { id: 'budget-slider', name: 'Budget Slider' },
+                { id: 'generate-btn', name: 'Generate Button' },
+                { id: 'result-section', name: 'Result Section' },
+                { id: 'result-img', name: 'Result Image' }
+            ];
+
+            elements.forEach(elem => {
+                const el = document.getElementById(elem.id);
+                if (el) {
+                    addTestResult(resultsDiv, `Element: ${elem.name}`, true, `Element found (${elem.id})`);
+                } else {
+                    addTestResult(resultsDiv, `Element: ${elem.name}`, false, `Element NOT found (${elem.id})`);
+                }
+            });
+
+            // Test 3: Check JavaScript functions
+            if (typeof generateDesign === 'function') {
+                addTestResult(resultsDiv, 'generateDesign() Function', true, 'Function exists and is callable');
+            } else {
+                addTestResult(resultsDiv, 'generateDesign() Function', false, 'Function NOT found');
+            }
+        }
+
+        function generateDesignTest() {
+            const resultDiv = document.getElementById('manual-result');
+            const prompt = document.getElementById('prompt').value.trim();
+            const shape = document.getElementById('shape').value;
+
+            if (!prompt) {
+                addTestResult(resultDiv, 'Design Generation', false, 'Please enter a prompt first');
+                return;
+            }
+
+            resultDiv.innerHTML = '<p>⏳ Generating design... This may take 10-30 seconds...</p>';
+
+            const shapeText = shape ? shape + ' shaped nails, ' : '';
+            const fullPrompt = `professional nail art photo, ${shapeText}${prompt}, macro photography, studio lighting, sharp focus, high detail, elegant nail photography, white background`;
+
+            const encodedPrompt = encodeURIComponent(fullPrompt);
+            const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=512&height=512&nologo=true&seed=${Date.now()}`;
+
+            const img = new Image();
+            img.onload = function() {
+                resultDiv.innerHTML = `
+                    <div class="test-result pass">
+                        ✅ Design generated successfully!
+                    </div>
+                    <p><strong>Prompt:</strong> ${prompt}</p>
+                    <p><strong>Shape:</strong> ${shape || 'None specified'}</p>
+                    <img src="${imageUrl}" alt="Generated Design">
+                    <p style="font-size: 0.8em; color: #666;">Generated at: ${new Date().toLocaleTimeString()}</p>
+                `;
+            };
+
+            img.onerror = function() {
+                addTestResult(resultDiv, 'Design Generation', false, 'Failed to generate image. This could be a network issue or API limit.');
+            };
+
+            img.src = imageUrl;
+        }
+
+        function addTestResult(container, testName, passed, message) {
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `test-result ${passed ? 'pass' : 'fail'}`;
+            resultDiv.innerHTML = `<strong>${passed ? '✅' : '❌'} ${testName}:</strong> ${message}`;
+            container.appendChild(resultDiv);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glossy - Design Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .generator-section { max-width: 700px; margin: 0 auto; padding: 2rem 1rem; }
+        .generator-section h1 { text-align: center; margin-bottom: 0.5rem; }
+        .generator-section > p { text-align: center; color: #888; margin-bottom: 2rem; }
+
+        .inspo-preview { display: none; background: #faf0f5; border-radius: 14px; padding: 1rem 1.2rem; margin-bottom: 1.5rem; border: 1.5px solid #e0b4c8; }
+        .inspo-preview.visible { display: flex; align-items: center; gap: 1rem; }
+        .inspo-preview p { font-size: 0.9rem; color: #a0527a; margin: 0; flex: 1; }
+        .inspo-preview button { background: none; border: none; color: #ccc; font-size: 1.2rem; cursor: pointer; }
+        .inspo-preview button:hover { color: #e05c8a; }
+        .inspo-label { font-size: 0.75rem; font-weight: 700; color: #c47a9a; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.3rem; }
+
+        .form-group { margin-bottom: 1.4rem; }
+        .form-group label { display: block; font-weight: 600; font-size: 0.95rem; margin-bottom: 0.5rem; color: #555; }
+        .form-group textarea { width: 100%; padding: 0.8rem 1rem; border-radius: 12px; border: 1.5px solid #e0b4c8; font-family: 'Nunito', sans-serif; font-size: 0.95rem; resize: vertical; min-height: 100px; outline: none; box-sizing: border-box; }
+        .form-group textarea:focus { border-color: #c47a9a; }
+        .form-group select { width: 100%; padding: 0.7rem 1rem; border-radius: 12px; border: 1.5px solid #e0b4c8; font-family: 'Nunito', sans-serif; font-size: 0.95rem; outline: none; background: #fff; }
+        .form-group select:focus { border-color: #c47a9a; }
+
+        .budget-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem; }
+        .budget-value { font-weight: 700; color: #c47a9a; font-size: 1rem; }
+        input[type=range] { width: 100%; accent-color: #e0b4c8; }
+
+        .generate-btn { width: 100%; padding: 0.9rem; background: #e0b4c8; color: #fff; border: none; border-radius: 999px; font-family: 'Nunito', sans-serif; font-size: 1.05rem; font-weight: 700; cursor: pointer; transition: background 0.2s; margin-top: 0.5rem; }
+        .generate-btn:hover { background: #c47a9a; }
+        .generate-btn:disabled { background: #ddd; cursor: not-allowed; }
+
+        .loading { display: none; text-align: center; padding: 2rem; }
+        .loading p { color: #888; font-size: 0.95rem; margin-top: 1rem; }
+        .spinner { width: 40px; height: 40px; border: 4px solid #f3e6f0; border-top: 4px solid #e0b4c8; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .result-section { display: none; margin-top: 2rem; }
+        .result-section h2 { text-align: center; margin-bottom: 1.2rem; font-size: 1.1rem; color: #555; }
+        .result-card { border-radius: 18px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.10); background: #fff; }
+        .result-card img { width: 100%; display: block; max-height: 420px; object-fit: cover; }
+        .result-info { padding: 1rem 1.2rem 0.5rem; }
+        .result-info .result-meta { font-size: 0.9rem; color: #888; margin-bottom: 0.3rem; }
+        .result-info .result-price { font-weight: 700; color: #c47a9a; font-size: 1.05rem; }
+        .result-buttons { display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0.7rem 1.2rem 1.2rem; }
+        .result-buttons button, .result-buttons a { font-family: 'Nunito', sans-serif; font-size: 0.9rem; padding: 0.5rem 1.2rem; border-radius: 999px; border: none; cursor: pointer; text-decoration: none; display: inline-block; }
+        .btn-book-result { background: #e0b4c8; color: #fff; }
+        .btn-book-result:hover { background: #c47a9a; }
+        .btn-cart-result { background: #faf0f5; color: #c47a9a; border: 1.5px solid #e0b4c8 !important; }
+        .btn-cart-result:hover { background: #e0b4c8; color: #fff; }
+        .btn-regenerate { background: #f5f5f5; color: #888; }
+        .btn-regenerate:hover { background: #eee; }
+
+        .error-msg { display: none; background: #fff0f0; border: 1.5px solid #ffb3b3; border-radius: 12px; padding: 1rem 1.2rem; color: #c0392b; font-size: 0.9rem; margin-top: 1rem; text-align: center; }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="nav-container">
+                <h1 class="logo">Glossy</h1>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="portfolio.html">Portfolio</a></li>
+                    <li><a href="inspo-gallery.html">Inspo Gallery</a></li>
+                    <li><a href="design-generator.html">Design Generator</a></li>
+                    <li><a href="book-now.html">Book Now</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="generator-section">
+            <h1>Design Generator</h1>
+            <p>Describe your dream nails and let AI bring them to life — then book your appointment instantly.</p>
+
+            <!-- Inspo preview from gallery -->
+            <div class="inspo-preview" id="inspo-preview">
+                <div style="flex:1">
+                    <div class="inspo-label">✨ Inspo from Gallery</div>
+                    <p id="inspo-preview-text"></p>
+                </div>
+                <button onclick="clearInspo()" aria-label="Remove inspo">✕</button>
+            </div>
+
+            <!-- Nail shape -->
+            <div class="form-group">
+                <label for="nail-shape">Nail Shape</label>
+                <select id="nail-shape">
+                    <option value="">Select a shape...</option>
+                    <option value="almond">Almond</option>
+                    <option value="coffin">Coffin</option>
+                    <option value="square">Square</option>
+                    <option value="oval">Oval</option>
+                    <option value="stiletto">Stiletto</option>
+                    <option value="round">Round</option>
+                    <option value="squoval">Squoval</option>
+                </select>
+            </div>
+
+            <!-- Description -->
+            <div class="form-group">
+                <label for="design-prompt">Describe Your Design</label>
+                <textarea id="design-prompt" placeholder="e.g. soft pink ombre with gold foil accents and tiny flowers on the ring finger, glossy finish..."></textarea>
+            </div>
+
+            <!-- Budget -->
+            <div class="form-group">
+                <label>Budget Range</label>
+                <div class="budget-row">
+                    <span style="font-size:0.85rem;color:#888;">$30</span>
+                    <span class="budget-value" id="budget-display">$65</span>
+                    <span style="font-size:0.85rem;color:#888;">$100</span>
+                </div>
+                <input type="range" id="budget-slider" min="30" max="100" value="65" step="5">
+            </div>
+
+            <button class="generate-btn" id="generate-btn" onclick="generateDesign()">✨ Generate My Design</button>
+
+            <!-- Loading -->
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Creating your dream nails... this takes about 10 seconds ✨</p>
+            </div>
+
+            <!-- Error -->
+            <div class="error-msg" id="error-msg"></div>
+
+            <!-- Result -->
+            <div class="result-section" id="result-section">
+                <h2>Here's your design ✨</h2>
+                <div class="result-card">
+                    <img id="result-img" src="" alt="Generated nail design">
+                    <div class="result-info">
+                        <div class="result-meta" id="result-time"></div>
+                        <div class="result-price" id="result-price"></div>
+                    </div>
+                    <div class="result-buttons">
+                        <a class="btn-book-result" href="book-now.html">Book Now</a>
+                        <button class="btn-cart-result" onclick="saveToCart()">🛒 Save Design</button>
+                        <button class="btn-regenerate" onclick="generateDesign()">🔄 Try Again</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-container">
+            <div class="contact-info">
+                <h3>Contact Me</h3>
+                <p>Email: jacklynliu360@gmail.com</p>
+                <p>Phone: (437) 218-3226</p>
+            </div>
+            <div class="social-links">
+                <a href="https://www.instagram.com/jackyznails" class="social-link">📷</a>
+                <a href="https://www.tiktok.com/@jackyznails" class="social-link">🎵</a>
+                <a href="https://jackyznails.etsy.com" class="social-link">🛒</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="config.js"></script>
+    <script src="script.js"></script>
+    <script>
+        const INSPO_KEY = 'glossyInspoPrompt';
+        const CART_KEY = 'glossyBookingCart';
+
+        // Load inspo from gallery if present
+        window.addEventListener('DOMContentLoaded', () => {
+            const saved = localStorage.getItem(INSPO_KEY);
+            if (saved) {
+                document.getElementById('design-prompt').value = saved;
+                document.getElementById('inspo-preview-text').textContent = saved;
+                document.getElementById('inspo-preview').classList.add('visible');
+            }
+
+            // Budget slider
+            const slider = document.getElementById('budget-slider');
+            const display = document.getElementById('budget-display');
+            slider.addEventListener('input', () => {
+                display.textContent = '$' + slider.value;
+            });
+        });
+
+        function clearInspo() {
+            localStorage.removeItem(INSPO_KEY);
+            document.getElementById('inspo-preview').classList.remove('visible');
+            document.getElementById('design-prompt').value = '';
+        }
+
+        function estimatePrice(budget) {
+            const low = Math.max(30, parseInt(budget) - 10);
+            const high = Math.min(100, parseInt(budget) + 10);
+            return '$' + low + '–$' + high;
+        }
+
+        function estimateTime(description) {
+            const desc = description.toLowerCase();
+            if (desc.includes('3d') || desc.includes('gem') || desc.includes('crystal') || desc.includes('sculpt')) return '4–6 hrs';
+            if (desc.includes('nail art') || desc.includes('hand paint') || desc.includes('detail') || desc.includes('character')) return '3–5 hrs';
+            if (desc.includes('ombre') || desc.includes('chrome') || desc.includes('foil') || desc.includes('gradient')) return '2–4 hrs';
+            if (desc.includes('french') || desc.includes('simple') || desc.includes('clean') || desc.includes('minimal')) return '1–3 hrs';
+            return '2–4 hrs';
+        }
+
+        async function generateDesign() {
+            const prompt = document.getElementById('design-prompt').value.trim();
+            const shape = document.getElementById('nail-shape').value;
+            const budget = document.getElementById('budget-slider').value;
+
+            if (!prompt) {
+                showError('Please describe the nail design you want first!');
+                return;
+            }
+
+            document.getElementById('result-section').style.display = 'none';
+            document.getElementById('error-msg').style.display = 'none';
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('generate-btn').disabled = true;
+
+            try {
+                const imageUrl = createLocalAiDesign(prompt, shape, budget);
+                document.getElementById('result-img').src = imageUrl;
+                document.getElementById('result-price').textContent = estimatePrice(budget);
+                document.getElementById('result-time').textContent = '⏱ Estimated time: ' + estimateTime(prompt);
+                document.getElementById('result-section').style.display = 'block';
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('generate-btn').disabled = false;
+
+                window._lastResult = {
+                    id: 'gen-' + Date.now(),
+                    title: prompt.length > 40 ? prompt.substring(0, 40) + '...' : prompt,
+                    price: estimatePrice(budget),
+                    time: estimateTime(prompt),
+                    imgSrc: imageUrl
+                };
+            } catch (err) {
+                console.error(err);
+                showError('Could not generate image. Please try again.');
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('generate-btn').disabled = false;
+            }
+        }
+
+        function createLocalAiDesign(prompt, shape, budget) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 512;
+            const ctx = canvas.getContext('2d');
+            const seed = hashString(prompt + (shape || 'oval') + budget);
+            const rand = mulberry32(seed);
+
+            const palette = getPalette(prompt);
+            const bg = ctx.createLinearGradient(0, 0, 512, 512);
+            bg.addColorStop(0, palette.background1);
+            bg.addColorStop(1, palette.background2);
+            ctx.fillStyle = bg;
+            ctx.fillRect(0, 0, 512, 512);
+
+            // Add soft glow blobs behind nails
+            ctx.globalAlpha = 0.22;
+            for (let i = 0; i < 6; i++) {
+                ctx.beginPath();
+                ctx.fillStyle = palette.glow[i % palette.glow.length];
+                ctx.arc(80 + i * 70 + rand() * 20, 150 + rand() * 140, 70 + rand() * 35, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.globalAlpha = 1;
+
+            const nailPositions = [
+                { x: 82, y: 132 },
+                { x: 160, y: 118 },
+                { x: 238, y: 108 },
+                { x: 316, y: 118 },
+                { x: 394, y: 132 }
+            ];
+
+            nailPositions.forEach((nail, index) => {
+                drawNail(ctx, nail.x, nail.y, palette.nails[index % palette.nails.length], shape || 'oval', rand, palette.highlight);
+            });
+
+            if (/(flower|floral|bloom)/i.test(prompt)) {
+                drawFlowerCluster(ctx, rand, palette);
+            }
+            if (/(dot|polka|speckle|sparkle|glitter)/i.test(prompt)) {
+                drawPolkaDots(ctx, rand, palette);
+            }
+            if (/(stripe|line|graphic|geometric)/i.test(prompt)) {
+                drawStripes(ctx, rand, palette);
+            }
+            if (/(gem|rhinestone|crystal|diamond|sparkle)/i.test(prompt)) {
+                drawGems(ctx, rand, palette);
+            }
+            if (/(ombre|gradient|chrome|mirror|metallic)/i.test(prompt)) {
+                drawChromeGlow(ctx, palette);
+            }
+
+            ctx.fillStyle = 'rgba(255,255,255,0.8)';
+            ctx.fillRect(0, 438, 512, 74);
+            ctx.fillStyle = '#a0527a';
+            ctx.font = 'bold 22px Nunito, Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('AI Design', 256, 472);
+            ctx.font = '600 12px Nunito, Arial';
+            ctx.fillText(prompt.slice(0, 28), 256, 492);
+
+            return canvas.toDataURL('image/png');
+        }
+
+        function getPalette(prompt) {
+            const lower = prompt.toLowerCase();
+            const packs = [
+                {
+                    background1: '#fdf0f7',
+                    background2: '#f3e4ef',
+                    nails: ['#e7bfd0', '#d793b7', '#f7d7a7', '#d8b5c5', '#c37fa6'],
+                    glow: ['#e9bfd8', '#f7d7a7', '#d9b5ff', '#ffd9ef'],
+                    highlight: '#fffdfd'
+                },
+                {
+                    background1: '#f4f1ff',
+                    background2: '#e4ddff',
+                    nails: ['#c7b6ff', '#a58ee8', '#f2c7ff', '#cfe2ff', '#a5b6ff'],
+                    glow: ['#dccdff', '#f5d7ff', '#bfd8ff', '#f3d3d3'],
+                    highlight: '#ffffff'
+                },
+                {
+                    background1: '#eefaf3',
+                    background2: '#dff5eb',
+                    nails: ['#80d8b1', '#4ec9a5', '#d5f3a9', '#8ecae6', '#a9d18e'],
+                    glow: ['#c1f2d3', '#d8efd5', '#d1effd', '#f0f8d7'],
+                    highlight: '#f8fff9'
+                },
+                {
+                    background1: '#fff5eb',
+                    background2: '#fbe7d8',
+                    nails: ['#f6c07b', '#ef9d73', '#efc2a2', '#f7d57f', '#e8ac93'],
+                    glow: ['#ffd9a8', '#ffdebf', '#ffc7b0', '#fceab0'],
+                    highlight: '#fffaf5'
+                }
+            ];
+
+            if (/(pink|rose|blush)/i.test(prompt)) return { background1: '#fff0f7', background2: '#f5dfe9', nails: ['#f4c4d0', '#d994b6', '#e8b4d9', '#f7d8ca', '#c57a9d'], glow: ['#f9d7e6', '#f8d7b8', '#fdddf0', '#f5e2ff'], highlight: '#fffdfd' };
+            if (/(gold|champagne|yellow|sunset)/i.test(prompt)) return { background1: '#fff8e8', background2: '#f7e6c9', nails: ['#f3d27a', '#e9b937', '#f7d47c', '#f2c48d', '#d6a355'], glow: ['#f9efa8', '#fbdc7d', '#f8d897', '#f7e6b7'], highlight: '#fffef8' };
+            if (/(silver|chrome|metallic|mirror)/i.test(prompt)) return { background1: '#eef3ff', background2: '#dde9f6', nails: ['#dce5ef', '#b0becd', '#edf2f9', '#c8d3e3', '#dfeaf7'], glow: ['#f2f6ff', '#c9d8ff', '#e4ebff', '#f7fbff'], highlight: '#ffffff' };
+            if (/(blue|purple|indigo|lavender)/i.test(prompt)) return { background1: '#f3eeff', background2: '#e7e3ff', nails: ['#b7a8ff', '#8b78d9', '#9fc1ff', '#c9b9ff', '#6d7fe8'], glow: ['#d9d0ff', '#cfefff', '#e5dbff', '#d9d7ff'], highlight: '#ffffff' };
+            if (/(emerald|green|mint|forest)/i.test(prompt)) return { background1: '#eafaf3', background2: '#d8f4eb', nails: ['#9fe7b1', '#5ed1a3', '#a7e6c9', '#cfeecb', '#6acaa4'], glow: ['#d6f9e5', '#daf5d0', '#c5e9d5', '#dbf4d0'], highlight: '#f3fffb' };
+            if (/(red|burgundy|cherry|ruby)/i.test(prompt)) return { background1: '#fff0f0', background2: '#f7e1e1', nails: ['#f29ca0', '#d95a62', '#efb0b0', '#c55378', '#b5486c'], glow: ['#ffdfe3', '#f2c7d3', '#f7d9d9', '#f8d1ae'], highlight: '#fff7f7' };
+            return packs[0];
+        }
+
+        function drawNail(ctx, x, y, color, shape, rand, highlight) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.shadowColor = 'rgba(0,0,0,0.18)';
+            ctx.shadowBlur = 12;
+            ctx.shadowOffsetY = 6;
+
+            if (shape === 'coffin') {
+                ctx.beginPath();
+                ctx.moveTo(-32, 0);
+                ctx.lineTo(32, 0);
+                ctx.lineTo(18, 110);
+                ctx.lineTo(-18, 110);
+                ctx.closePath();
+                ctx.fillStyle = color;
+                ctx.fill();
+            } else if (shape === 'square') {
+                ctx.fillStyle = color;
+                ctx.fillRect(-30, 0, 60, 110);
+            } else if (shape === 'stiletto') {
+                ctx.beginPath();
+                ctx.moveTo(-20, 0);
+                ctx.lineTo(20, 0);
+                ctx.lineTo(8, 115);
+                ctx.lineTo(-8, 115);
+                ctx.closePath();
+                ctx.fillStyle = color;
+                ctx.fill();
+            } else if (shape === 'almond') {
+                ctx.beginPath();
+                ctx.moveTo(-24, 0);
+                ctx.quadraticCurveTo(-40, 30, -24, 110);
+                ctx.quadraticCurveTo(0, 120, 24, 110);
+                ctx.quadraticCurveTo(40, 30, 24, 0);
+                ctx.closePath();
+                ctx.fillStyle = color;
+                ctx.fill();
+            } else if (shape === 'squoval') {
+                ctx.beginPath();
+                ctx.roundRect(-26, 0, 52, 112, 12);
+                ctx.fillStyle = color;
+                ctx.fill();
+            } else {
+                ctx.beginPath();
+                ctx.ellipse(0, 52, 28, 60, 0, 0, Math.PI * 2);
+                ctx.fillStyle = color;
+                ctx.fill();
+            }
+
+            ctx.shadowColor = 'transparent';
+            ctx.fillStyle = 'rgba(255,255,255,0.3)';
+            ctx.beginPath();
+            ctx.ellipse(-8, 18, 10, 24, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = highlight;
+            ctx.globalAlpha = 0.9;
+            ctx.beginPath();
+            ctx.arc(0, 0, 8 + rand() * 8, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+
+        function drawFlowerCluster(ctx, rand, palette) {
+            for (let i = 0; i < 3; i++) {
+                const x = 130 + i * 115 + rand() * 20;
+                const y = 160 + rand() * 110;
+                for (let p = 0; p < 6; p++) {
+                    const angle = (Math.PI * 2 / 6) * p;
+                    ctx.fillStyle = palette.nails[(p + i) % palette.nails.length];
+                    ctx.beginPath();
+                    ctx.ellipse(x + Math.cos(angle) * 18, y + Math.sin(angle) * 18, 8, 14, angle, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.fillStyle = '#f9e27d';
+                ctx.beginPath();
+                ctx.arc(x, y, 6, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function drawPolkaDots(ctx, rand, palette) {
+            for (let i = 0; i < 22; i++) {
+                ctx.fillStyle = palette.nails[i % palette.nails.length];
+                ctx.beginPath();
+                ctx.arc(60 + rand() * 390, 80 + rand() * 280, 5 + rand() * 8, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function drawStripes(ctx, rand, palette) {
+            for (let i = 0; i < 9; i++) {
+                ctx.fillStyle = palette.nails[i % palette.nails.length];
+                ctx.globalAlpha = 0.55;
+                ctx.fillRect(30 + i * 48, 100, 18, 300);
+            }
+            ctx.globalAlpha = 1;
+        }
+
+        function drawGems(ctx, rand, palette) {
+            const gems = [
+                [110, 230], [230, 210], [350, 240], [180, 270], [300, 270], [420, 230]
+            ];
+            gems.forEach(([x, y]) => {
+                ctx.fillStyle = palette.glow[Math.floor(rand() * palette.glow.length)];
+                ctx.beginPath();
+                ctx.moveTo(x, y - 11);
+                ctx.lineTo(x + 10, y);
+                ctx.lineTo(x, y + 11);
+                ctx.lineTo(x - 10, y);
+                ctx.closePath();
+                ctx.fill();
+            });
+        }
+
+        function drawChromeGlow(ctx, palette) {
+            const grad = ctx.createRadialGradient(256, 256, 20, 256, 256, 260);
+            grad.addColorStop(0, 'rgba(255,255,255,0.7)');
+            grad.addColorStop(0.5, 'rgba(255,255,255,0.26)');
+            grad.addColorStop(1, 'rgba(255,255,255,0)');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, 512, 512);
+        }
+
+        function hashString(str) {
+            let h = 2166136261;
+            for (let i = 0; i < str.length; i++) {
+                h ^= str.charCodeAt(i);
+                h = Math.imul(h, 16777619);
+            }
+            return h >>> 0;
+        }
+
+        function mulberry32(a) {
+            return function() {
+                let t = (a += 0x6D2B79F5);
+                t = Math.imul(t ^ (t >>> 15), t | 1);
+                t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+                return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+            };
+        }
+    </script>
+</body>
+</html>

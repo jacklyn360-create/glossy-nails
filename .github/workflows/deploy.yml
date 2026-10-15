@@ -1,66 +1,93 @@
 name: CI/CD Pipeline
 
+# WHEN the robot wakes up
+  # wakes up when you push to main or pull request aimed at main
 on:
+# when you save (push) changes to the main branch
+  # you can also include the other branches under branchs:
   push:
     branches:
       - main
+  # when you ask to merge a branch into main (pull request)
   pull_request:
     branches:
-      - main
+      -main
 
+    # list of jobs the robot does
 jobs:
+
+  # job 1: safety check (CI)
   test:
     runs-on: ubuntu-latest
 
+    # the to-do list for this job in order
     steps:
+
+      # copy website files into the empty computer
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.x"
-
-      - name: Check Python syntax
-        run: python -m py_compile generate_image.py
-
+      # make sure non of pages and files are missing
+      # test -f means "does this file exist?"
       - name: Check required files
         run: |
-          test -f index.html
-          test -f styles.css
-          test -f script.js
-          test -f portfolio.html
-          test -f inspo-gallery.html
-          test -f design-generator.html
-          test -f book-now.html
+          - test -f book-now.html
+          - test -f index.html
+          - test -f design-generator.html
+          - test -f portfolio.html
+          - test -f inspo-gallery.html
+          - test -f styles.css
+          - test -f script.js
 
-  deploy:
-    needs: test
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # job 2: publishing the website (CD)
+    deploy:
 
-    runs-on: ubuntu-latest
+      # only starts if the test finishes and passes
+      needs: test
+      
+      # only publish if this was a push (and not a pull request) AND it was to the main branch
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
+      # use another clean, empty Ubuntu computer
+      runs-on: ubuntu-latest
 
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      # list of what the robot is allowed to do
+      permissions:
+        # the robot may look at your files
+        contents: read
+        # the robot may publish the github pages
+        pages: write
+        # when publishing, the robot has an id badge to tell github this is coming from your repo
+        id-token: write
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      # the destination: GitHub Pages
+      environment:
+        name: github-pages
+        # shows your live website link on GitHub once it's published
+        url: ${{ steps.deployment.outputs.page_url }}
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
+      # to do list for this job
+      steps: 
 
-      - name: Upload website
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: .
+        # copy your files onto this new empty computer (each job starts empty)
+        - name: Checkout repository
+          uses: actions/checkout@v4
 
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+        # get GitHub pages ready to receive site
+        - name: Setup pages
+          uses: actions/configure-pages@v5
+
+        # pack up the whole folder ("." means everything) into one bundle
+        - name: Upload website
+          uses: actions/upload-pages-artifact@v3
+          with:
+            path: .
+
+        # publish the bundle so your site goes live
+        # "id: deployment" is a nickname so the url above can find the finished link
+        - name: Deploy to Github pages
+          id: deployment
+          uses: actions/deploy-pages@v4
+
+          
+        

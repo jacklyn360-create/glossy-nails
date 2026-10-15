@@ -26,6 +26,13 @@ Visit the project repository:
 ```text
 glossy-nails/
 │
+├── docs/
+│   ├── requirements.md
+│   ├── design.md
+│   ├── architecture.md
+│   ├── ai-skills.md
+│   └── implementation-plan.md
+│
 ├── images/
 │   └── Website images and visual assets
 │
@@ -59,6 +66,14 @@ glossy-nails/
 └── .gitignore
     └── Git configuration for ignored files
 ```
+
+## 📚 Project Documentation
+
+- [Project requirements](docs/requirements.md) — current scope, requirements, and constraints
+- [Experience design](docs/design.md) — visual principles, page flows, and accessibility
+- [Architecture](docs/architecture.md) — current components, data flow, runtime, and evolution path
+- [AI skills](docs/ai-skills.md) — current generator capabilities and future AI requirements
+- [Implementation plan](docs/implementation-plan.md) — phased delivery plan and exit criteria
 
 ## 🚀 Getting Started
 
